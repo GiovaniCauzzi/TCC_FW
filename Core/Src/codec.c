@@ -50,6 +50,37 @@ void codec_init(I2C_HandleTypeDef *i2c_instance)
 	aux[1] = 0b00000000;
 	result = codec_set_reg(i2c_instance, dREG_ADC_MIX_CONTROL, &aux, 2);
 
+	/*
+Target format:
+Sample Rate: 48 KHz
+Channel Length: 32 bits
+LRCK=48KHz
+BCLK=3.071MHz (64 * 48KHz)
+
+MCLK clock request:
+MCLK=12.288MHz (256 * 48 KHz)
+
+Set MX-FA[0] to “1” // For MCLK input clock getting control
+Set MX-61[15] to “1” // Enable I2S-1
+Set MX-70[15] to “0” // Enable Master mode
+*/
+
+	aux[0] = 0b00000001;
+	aux[1] = 0b00000000;
+	result = codec_set_reg(i2c_instance, dREG_GENERAL_CTRL1, &aux, 2);
+
+	aux[0] = 0b00000110;
+	aux[1] = 0b10011000;
+	result = codec_set_reg(i2c_instance, dREG_POWER_MANAGE, &aux, 2);
+
+	aux[0] = 0b00000000;
+	aux[1] = 0b00000000;
+	result = codec_set_reg(i2c_instance, dREG_DIG_INTERFACE_CONTROL, &aux, 2);
+
+	aux[0] = 0b00000100;
+	aux[1] = 0b00000000;
+	result = codec_set_reg(i2c_instance, dREG_ADC_DAC_CLK_CTRL1, &aux, 2);
+
 	
 }
 

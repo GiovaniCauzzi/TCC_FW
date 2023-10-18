@@ -27,6 +27,12 @@
 // #define dREG_
 // #define dREG_
 
+#define dREG_GENERAL_CTRL1 0xFA
+#define dREG_POWER_MANAGE 0x61
+#define dREG_DIG_INTERFACE_CONTROL 0x70
+#define dREG_ADC_DAC_CLK_CTRL1 0x73              // OVERSAMPLING
+
+
 
 void codec_init(I2C_HandleTypeDef *i2c_instance);
 HAL_StatusTypeDef codec_set_reg(I2C_HandleTypeDef *i2c_instance, unsigned char reg, unsigned char *pdata, unsigned int size);

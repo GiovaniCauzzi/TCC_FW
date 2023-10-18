@@ -2,6 +2,7 @@
 #define INCLUDES_H
 
 #include "codec.h"
+#include <stdint.h>
 
 int GL_timer_100us = 0;
 int GL_timer_1ms = 0;
