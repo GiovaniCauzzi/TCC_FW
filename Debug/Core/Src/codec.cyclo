@@ -1,3 +1,3 @@
 ../Core/Src/codec.c:10:6:codec_init	1
-../Core/Src/codec.c:87:19:codec_set_reg	1
-../Core/Src/codec.c:101:19:codec_read_reg	1
+../Core/Src/codec.c:154:19:codec_set_reg	2
+../Core/Src/codec.c:172:19:codec_read_reg	1

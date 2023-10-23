@@ -52,7 +52,13 @@ TIM_HandleTypeDef htim14;
 UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
+int16_t adcData[dBUFFER_SIZE];
+int16_t dacData[dBUFFER_SIZE];
 
+static volatile int16_t *inBufferPtr;
+static volatile int16_t *outBufferPtr = &dacData[0];
+
+uint8_t flagDataReady = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -70,6 +76,68 @@ static void MX_TIM14_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void HAL_I2SEx_TxRxHalfCpltCallback(I2S_HandleTypeDef *hi2s)
+{
+  inBufferPtr = &adcData[0];
+  outBufferPtr = &dacData[0];
+  flagDataReady = 1;
+}
+
+void HAL_I2SEx_TxRxCpltCallback(I2S_HandleTypeDef *hi2s)
+{
+  inBufferPtr = &adcData[dBUFFER_SIZE / 2];
+  outBufferPtr = &dacData[dBUFFER_SIZE / 2];
+  flagDataReady = 1;
+}
+
+void zera_buffer(void)
+{
+  for(uint16_t i = 0; i<dBUFFER_SIZE ; i++)
+  {
+      adcData[i] = 0;
+  }
+    
+}
+
+void processData()
+{
+  static float leftIn, leftOut;
+  static float rightIn, rightOut;
+
+  for (uint16_t n = 0 ; n < (dBUFFER_SIZE / 2 - 1) ; n += 2)
+  {
+
+    //================ LEFT CHANNEL ================
+    // Get ADC input and convert it to float
+    leftIn = INT16_TO_FLOAT * inBufferPtr[n];
+    if (leftIn > 1.0f)
+    {
+      leftIn -= 2.0f;
+    }
+
+    // Compute new sample
+    leftOut = leftIn;
+
+    // Convert back to signed int  and set DAC output
+    outBufferPtr[n] = (int16_t)(FLOAT_TO_INT16 * leftOut);
+
+    //================ RIGHT CHANNEL ================
+    // Get ADC input and convert it to float
+    rightIn = INT16_TO_FLOAT * inBufferPtr[n+1];
+    if (rightIn > 1.0f)
+    {
+      rightIn -= 2.0f;
+    }
+
+    // Compute new sample
+    rightOut = rightIn;
+
+    // Convert back to signed int  and set DAC output
+    outBufferPtr[n+1] = (int16_t)(FLOAT_TO_INT16 * rightOut);
+
+  }
+  flagDataReady = 0;
+}
 
 /* USER CODE END 0 */
 
@@ -80,7 +148,6 @@ static void MX_TIM14_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	char buffer[10];
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -108,20 +175,31 @@ int main(void)
   MX_USART1_UART_Init();
   MX_TIM14_Init();
   /* USER CODE BEGIN 2 */
-  HAL_TIM_Base_Start_IT(&htim14);
   codec_init(&hi2c2);
+  HAL_TIM_Base_Start_IT(&htim14);
+
+  HAL_StatusTypeDef status = HAL_I2SEx_TransmitReceive_DMA(&hi2s2, (uint16_t *)dacData, (uint16_t *)adcData, dBUFFER_SIZE);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    if (flagDataReady)
+    {
+		int16_t current_ready_half[dBUFFER_SIZE];
+		int i = 0;
+		for (i = 0; i <= dBUFFER_SIZE; i++) {
+			current_ready_half[i] = inBufferPtr[i];
+		}
+		processData();
+    }
 
+    if (GL_timer_100ms)
+    {
+      // codec_init(&hi2c2);
 
-	  if(GL_timer_100ms)
-	  {
-		  codec_init(&hi2c2);
-	  }
+    }
 
     /* USER CODE END WHILE */
 
@@ -136,7 +214,6 @@ int main(void)
   */
 void SystemClock_Config(void)
 {
-
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
@@ -429,7 +506,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   static int count_1ms = 0;
   static int count_10ms = 0;
   static int count_100ms = 0;
-  static int count_1s = 0;
+  //static int count_1s = 0;
 
   if (htim->Instance == TIM14) // 100us
   {
