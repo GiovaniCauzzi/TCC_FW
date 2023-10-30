@@ -32,6 +32,9 @@
 #define dREG_RECMIXL_CTRL2          0x3C
 #define dREG_RECMIXR_CTRL1          0x3D
 #define dREG_RECMIXR_CTRL2          0x3E
+#define dREG_HPOMIX_CTRL            0x45
+#define dREG_OUTMIXL_CTRL1          0x4D
+#define dREG_OUTMIXL_CTRL2          0x4E
 #define dREG_OUTMIXL_CTRL3          0x4F
 #define dREG_OUTMIXR_CTRL3          0x52
 #define dREG_LOUTMIX_CTRL           0x53
@@ -42,11 +45,15 @@
 #define dREG_POWER_MANAGE_CTRL1     0x61
 #define dREG_POWER_MANAGE_CTRL2     0x62
 #define dREG_POWER_MANAGE_CTRL3     0x63
+#define dREG_POWER_MANAGE_CTRL4     0x64
 #define dREG_POWER_MANAGE_CTRL5     0x65
 #define dREG_POWER_MANAGE_CTRL6     0x66
 #define dREG_DIG_INTERFACE_CONTROL  0x70
 #define dREG_ADC_DAC_CLK_CTRL1      0x73              // OVERSAMPLING
 #define dREG_GLOBAL_CLK_CTRL        0x80
+#define dREG_HP_AMP_CTRL1           0x8E
+
+#define dREG_WIND_FILTER_CTRL2      0xd3
 
 
 void codec_init(I2C_HandleTypeDef *i2c_instance);

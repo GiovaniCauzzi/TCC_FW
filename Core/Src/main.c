@@ -99,10 +99,29 @@ void zera_buffer(void)
     
 }
 
+
+#define SAMPLE_RATE 44100  // Sample rate in Hz
+#define FREQUENCY 1440.0   // Frequency of the sine wave in Hz (A440)
+
+// Function to generate a sine wave
+void generateSineWave(float* buffer, int numSamples) {
+    for (int i = 0; i < numSamples; i++) {
+        double t = (double)i / SAMPLE_RATE;
+        double amplitude = 0.5;  // Adjust the amplitude as needed (0.5 for a range of -0.5 to 0.5)
+        buffer[i] = amplitude * sin(2 * M_PI * FREQUENCY * t);
+    }
+}
+
 void processData()
 {
   static float leftIn, leftOut;
   static float rightIn, rightOut;
+  static uint32_t time = 0;
+
+  if(time++ > 100000)
+  {
+	  time = 0;
+  }
 
   for (uint16_t n = 0 ; n < (dBUFFER_SIZE / 2 - 1) ; n += 2)
   {
@@ -117,6 +136,7 @@ void processData()
 
     // Compute new sample
     leftOut = leftIn;
+    leftOut = 1000000000 * sin(2 * M_PI * FREQUENCY * time);
 
     // Convert back to signed int  and set DAC output
     outBufferPtr[n] = (int16_t)(FLOAT_TO_INT16 * leftOut);
@@ -131,6 +151,7 @@ void processData()
 
     // Compute new sample
     rightOut = rightIn;
+    rightOut = 1000000000 * sin(2 * M_PI * FREQUENCY * time);
 
     // Convert back to signed int  and set DAC output
     outBufferPtr[n+1] = (int16_t)(FLOAT_TO_INT16 * rightOut);
@@ -171,11 +192,12 @@ int main(void)
   MX_DMA_Init();
   MX_I2C2_Init();
   MX_I2S2_Init();
-  MX_ADC1_Init();
-  MX_USART1_UART_Init();
+  //MX_ADC1_Init();
+  //MX_USART1_UART_Init();
   MX_TIM14_Init();
   /* USER CODE BEGIN 2 */
   codec_init(&hi2c2);
+  //codec_init_teste(&hi2c2);
   HAL_TIM_Base_Start_IT(&htim14);
 
   HAL_StatusTypeDef status = HAL_I2SEx_TransmitReceive_DMA(&hi2s2, (uint16_t *)dacData, (uint16_t *)adcData, dBUFFER_SIZE);
@@ -187,11 +209,6 @@ int main(void)
   {
     if (flagDataReady)
     {
-		int16_t current_ready_half[dBUFFER_SIZE];
-		int i = 0;
-		for (i = 0; i <= dBUFFER_SIZE; i++) {
-			current_ready_half[i] = inBufferPtr[i];
-		}
 		processData();
     }
 

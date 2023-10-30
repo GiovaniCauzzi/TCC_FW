@@ -1,3 +1,4 @@
-../Core/Src/codec.c:10:6:codec_init	24	static
-../Core/Src/codec.c:154:19:codec_set_reg	48	static
-../Core/Src/codec.c:172:19:codec_read_reg	40	static
+../Core/Src/codec.c:10:19:codec_set_reg	40	static
+../Core/Src/codec.c:15:19:codec_set_reg_teste	40	static
+../Core/Src/codec.c:36:19:codec_read_reg	40	static
+../Core/Src/codec.c:52:6:codec_init	24	static

@@ -4,6 +4,7 @@
 #include "codec.h"
 #include <stdint.h>
 #include <stdio.h>
+#include <math.h>
 
 #define dBUFFER_SIZE 64
 #define INT16_TO_FLOAT 1.0f / 32768.0f
