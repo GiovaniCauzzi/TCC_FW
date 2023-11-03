@@ -214,6 +214,14 @@ void codec_init(I2C_HandleTypeDef *i2c_instance)
 	aux[1] = 0x20;
 	aux[0] = 0b00100010;
 	result = codec_set_reg(i2c_instance, dREG_WIND_FILTER_CTRL2, &aux[0], 2);
+
+	aux[1] = 0b00100001;
+	aux[0] = 0b11100001;
+	result = codec_set_reg(i2c_instance, dREG_DRC_AGC_CTRL1, &aux[0], 2);
+
+	aux[1] = 0b00000000;
+	aux[0] = 0b00100000;
+	result = codec_set_reg(i2c_instance, dREG_DRC_AGC_CTRL2, &aux[0], 2);
 }
 
 /*

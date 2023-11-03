@@ -54,6 +54,8 @@
 #define dREG_HP_AMP_CTRL1           0x8E
 #define dREG_GENERAL_CTRL1          0xFA
 
+#define dREG_DRC_AGC_CTRL1          0xb4
+#define dREG_DRC_AGC_CTRL2          0xb5
 #define dREG_WIND_FILTER_CTRL2      0xd3
 
 
