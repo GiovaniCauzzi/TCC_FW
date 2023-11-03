@@ -171,6 +171,8 @@ void processData()
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+  uint16_t blinkTimer = 1; //1ms steps
+  uint16_t blinkCount = 0;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -191,6 +193,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  HAL_GPIO_WritePin(STAT_LED_INT_GPIO_Port, STAT_LED_INT_Pin, GPIO_PIN_SET);
   MX_DMA_Init();
   MX_I2C2_Init();
   MX_I2S2_Init();
@@ -214,11 +217,17 @@ int main(void)
 		processData();
     }
 
-    if (GL_timer_100ms)
+    if (GL_timer_1ms)
     {
-      GL_timer_100ms = 0;
-      //codec_init(&hi2c2);
+      GL_timer_1ms = 0;
 
+      if(blinkCount++ >= blinkTimer)
+      {
+        blinkCount = 0;
+        HAL_GPIO_TogglePin(STAT_LED_INT_GPIO_Port, STAT_LED_INT_Pin);
+      }
+
+      //codec_init(&hi2c2);
     }
 
     /* USER CODE END WHILE */
@@ -554,7 +563,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
       count_10ms = 0;
       GL_timer_100ms = 1;
       count_100ms++;
-      HAL_GPIO_TogglePin(STAT_LED_INT_GPIO_Port, STAT_LED_INT_Pin);
+      //HAL_GPIO_TogglePin(STAT_LED_INT_GPIO_Port, STAT_LED_INT_Pin);
     }
 
     if(count_100ms >= 10)
