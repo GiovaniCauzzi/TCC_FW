@@ -136,10 +136,11 @@ void processData()
 
     // Compute new sample
     leftOut = leftIn;
-    leftOut = 1000000000 * sin(2 * M_PI * FREQUENCY * time);
+    //leftOut = 1000000000 * sin(2 * M_PI * FREQUENCY * time);
 
     // Convert back to signed int  and set DAC output
     outBufferPtr[n] = (int16_t)(FLOAT_TO_INT16 * leftOut);
+    //outBufferPtr[n] = 0;
 
     //================ RIGHT CHANNEL ================
     // Get ADC input and convert it to float
@@ -151,10 +152,11 @@ void processData()
 
     // Compute new sample
     rightOut = rightIn;
-    rightOut = 1000000000 * sin(2 * M_PI * FREQUENCY * time);
+    //rightOut = 1000000000 * sin(2 * M_PI * FREQUENCY * time);
 
     // Convert back to signed int  and set DAC output
     outBufferPtr[n+1] = (int16_t)(FLOAT_TO_INT16 * rightOut);
+    //outBufferPtr[n+1] = 0;
 
   }
   flagDataReady = 0;
@@ -192,8 +194,8 @@ int main(void)
   MX_DMA_Init();
   MX_I2C2_Init();
   MX_I2S2_Init();
-  //MX_ADC1_Init();
-  //MX_USART1_UART_Init();
+  MX_ADC1_Init();
+  MX_USART1_UART_Init();
   MX_TIM14_Init();
   /* USER CODE BEGIN 2 */
   codec_init(&hi2c2);
@@ -214,7 +216,8 @@ int main(void)
 
     if (GL_timer_100ms)
     {
-      // codec_init(&hi2c2);
+      GL_timer_100ms = 0;
+      //codec_init(&hi2c2);
 
     }
 
@@ -338,7 +341,7 @@ static void MX_I2C2_Init(void)
 
   /* USER CODE END I2C2_Init 1 */
   hi2c2.Instance = I2C2;
-  hi2c2.Init.ClockSpeed = 100000;
+  hi2c2.Init.ClockSpeed = 10000;
   hi2c2.Init.DutyCycle = I2C_DUTYCYCLE_2;
   hi2c2.Init.OwnAddress1 = 0;
   hi2c2.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;

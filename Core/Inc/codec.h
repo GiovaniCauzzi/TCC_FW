@@ -41,7 +41,6 @@
 // #define dREG_
 // #define dREG_
 
-#define dREG_GENERAL_CTRL1          0xFA
 #define dREG_POWER_MANAGE_CTRL1     0x61
 #define dREG_POWER_MANAGE_CTRL2     0x62
 #define dREG_POWER_MANAGE_CTRL3     0x63
@@ -50,8 +49,10 @@
 #define dREG_POWER_MANAGE_CTRL6     0x66
 #define dREG_DIG_INTERFACE_CONTROL  0x70
 #define dREG_ADC_DAC_CLK_CTRL1      0x73              // OVERSAMPLING
+#define dREG_ADC_DAC_CLK_CTRL2      0x74
 #define dREG_GLOBAL_CLK_CTRL        0x80
 #define dREG_HP_AMP_CTRL1           0x8E
+#define dREG_GENERAL_CTRL1          0xFA
 
 #define dREG_WIND_FILTER_CTRL2      0xd3
 

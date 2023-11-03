@@ -9,6 +9,13 @@
 
 HAL_StatusTypeDef codec_set_reg(I2C_HandleTypeDef *i2c_instance, unsigned char MemAddress, uint8_t *pdata, unsigned int size)
 {
+	uint64_t delayTosco = 0;
+
+	while(delayTosco++ < 500000)
+	{
+
+	}
+
 	return HAL_I2C_Mem_Write(i2c_instance, dCODEC_ADDR, MemAddress, I2C_MEMADD_SIZE_8BIT, pdata, size, dCODEC_HAL_MAX_DELAY);
 }
 
@@ -61,7 +68,7 @@ void codec_init(I2C_HandleTypeDef *i2c_instance)
 	result = codec_set_reg(i2c_instance, dREG_BLABLA, &aux[0], 2);
 	*/
 
-	aux[1] = 0x00;
+	aux[1] = 0x20;
 	aux[0] = 0x00;
 	result = codec_set_reg(i2c_instance, dREG_SW_RESET, &aux[0], 2);
 
@@ -74,7 +81,7 @@ void codec_init(I2C_HandleTypeDef *i2c_instance)
 	// result = HAL_I2C_Mem_Write(i2c_instance, dCODEC_ADDR, dREG_HPOUT, I2C_MEMADD_SIZE_8BIT, &aux[0], 2, dCODEC_HAL_MAX_DELAY);
 
 	aux[1] = 0x00;       // low byte data
-	aux[0] = 0b01000000; // high byte data
+	aux[0] = 0b01000000;//0b01000000; // high byte data
 	result = codec_set_reg(i2c_instance, dREG_HPOMIX_CTRL, &aux[0], 2);
 
 	aux[1] = 0b00001000;//00001000;
@@ -96,16 +103,17 @@ void codec_init(I2C_HandleTypeDef *i2c_instance)
 	aux[1] = 0b00100000;
 	aux[0] = 0b00111000;
 	result = codec_set_reg(i2c_instance, dREG_ADC_MIX_CONTROL, &aux[0], 2);
+	result = codec_read_reg(i2c_instance,dREG_ADC_MIX_CONTROL,databuffer, 2);
 
 	aux[1] = 0b00000000;
 	aux[0] = 0b00000000;
 	result = codec_set_reg(i2c_instance, dREG_RECMIXL_CTRL1, &aux[0], 2);
 
-	aux[1] = 0b01001001; 
+	aux[1] = 0b01001111; 
 	aux[0] = 0b00000000;
 	result = codec_set_reg(i2c_instance, dREG_RECMIXL_CTRL2, &aux[0], 2);
 
-	aux[1] = 0b01001001; 
+	aux[1] = 0b01001111; 
 	aux[0] = 0b00000000;
 	result = codec_set_reg(i2c_instance, dREG_RECMIXR_CTRL2, &aux[0], 2);
 
@@ -130,19 +138,19 @@ void codec_init(I2C_HandleTypeDef *i2c_instance)
 	result = codec_set_reg(i2c_instance, dREG_OUTMIXR_CTRL3, &aux[0], 2);
 
 	aux[1] = 0b00000000;//00000000;
-	aux[0] = 0b11000000;//00110000;
+	aux[0] = 0b11000000;//11000000;//00110000;
 	result = codec_set_reg(i2c_instance, dREG_LOUTMIX_CTRL, &aux[0], 2);
 
-	aux[1] = 0b00101111;
-	aux[0] = 0b00101111;
+	aux[1] = 0b00111111; // um certo ganho
+	aux[0] = 0b00111111; // um certo ganho
 	result = codec_set_reg(i2c_instance, dREG_ADC_DIG_VOL_CTRL, &aux[0], 2);
 
 	aux[1] = 0x00;
 	aux[0] = 0x00;
 	result = codec_set_reg(i2c_instance, dREG_ADC_DIG_BOOST_CTRL, &aux[0], 2);
 
-	aux[1] = 0b01000000; //10000000; // TESTE ADC DIRETO PARA DAC
-	aux[0] = 0b01000000; //10000000; // TESTE ADC DIRETO PARA DAC
+	aux[1] = 0b10000000; 
+	aux[0] = 0b10000000; 
 	result = codec_set_reg(i2c_instance, dREG_ADC2DAC_DIG_MIX_CTRL, &aux[0], 2);
 
 	aux[1] = 0xAF;
@@ -154,7 +162,7 @@ void codec_init(I2C_HandleTypeDef *i2c_instance)
 	result = codec_set_reg(i2c_instance, dREG_DAC_DIG_MIX_CTRL, &aux[0], 2);
 	
 
-	aux[1] = 0b00001001;
+	aux[1] = 0b00010001;
 	aux[0] = 0b00000000;
 	result = codec_set_reg(i2c_instance, dREG_GENERAL_CTRL1, &aux[0], 2);
 
@@ -167,11 +175,11 @@ void codec_init(I2C_HandleTypeDef *i2c_instance)
 	result = codec_set_reg(i2c_instance, dREG_POWER_MANAGE_CTRL2, &aux[0], 2);
 
 	aux[1] = 0b11111001;
-	aux[0] = 0b11010000;
+	aux[0] = 0b11111000;
 	result = codec_set_reg(i2c_instance, dREG_POWER_MANAGE_CTRL3, &aux[0], 2);
 
-	aux[1] = 0b00110110;
-	aux[0] = 0b00000000;
+	aux[1] = 0b00110110;//00110110;
+	aux[0] = 0b11001010;
 	result = codec_set_reg(i2c_instance, dREG_POWER_MANAGE_CTRL4, &aux[0], 2);
 
 	aux[1] = 0b00000000;
@@ -182,13 +190,18 @@ void codec_init(I2C_HandleTypeDef *i2c_instance)
 	aux[0] = 0b00111111;
 	result = codec_set_reg(i2c_instance, dREG_POWER_MANAGE_CTRL6, &aux[0], 2);
 
-	aux[1] = 0b00000000;//00000110;
-	aux[0] = 0b10011000; // config device as slave
+	aux[1] = 0b00000000;//00000000;//00000110;
+	aux[0] = 0b10000000;//10011000; // config device as slave
 	result = codec_set_reg(i2c_instance, dREG_DIG_INTERFACE_CONTROL, &aux[0], 2);
 
-	aux[1] = 0b00001010;//00000101;
+	aux[1] = 0b00000101;//00001010;//00000101;
 	aux[0] = 0b00000001;//00010000;
 	result = codec_set_reg(i2c_instance, dREG_ADC_DAC_CLK_CTRL1, &aux[0], 2);
+	result = codec_read_reg(i2c_instance,dREG_ADC_DAC_CLK_CTRL1,databuffer, 2);
+
+	aux[1] = 0x00;
+	aux[0] = 00001100;
+	result = codec_set_reg(i2c_instance, dREG_ADC_DAC_CLK_CTRL2, &aux[0], 2);
 
 	aux[1] = 0b00000000;
 	aux[0] = 0b00000000;
