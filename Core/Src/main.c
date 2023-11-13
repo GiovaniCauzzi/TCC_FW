@@ -44,8 +44,8 @@ ADC_HandleTypeDef hadc1;
 I2C_HandleTypeDef hi2c2;
 
 I2S_HandleTypeDef hi2s2;
-DMA_HandleTypeDef hdma_spi2_tx;
 DMA_HandleTypeDef hdma_i2s2_ext_rx;
+DMA_HandleTypeDef hdma_spi2_tx;
 
 TIM_HandleTypeDef htim14;
 
@@ -90,17 +90,8 @@ void HAL_I2SEx_TxRxCpltCallback(I2S_HandleTypeDef *hi2s)
   flagDataReady = 1;
 }
 
-void zera_buffer(void)
-{
-  for(uint16_t i = 0; i<dBUFFER_SIZE ; i++)
-  {
-      adcData[i] = 0;
-  }
-    
-}
 
-
-#define SAMPLE_RATE 44100  // Sample rate in Hz
+#define SAMPLE_RATE 48000  // Sample rate in Hz
 #define FREQUENCY 1440.0   // Frequency of the sine wave in Hz (A440)
 
 // Function to generate a sine wave
@@ -140,6 +131,7 @@ void processData()
 
     // Convert back to signed int  and set DAC output
     outBufferPtr[n] = (int16_t)(FLOAT_TO_INT16 * leftOut);
+    //outBufferPtr[n] = 0xF0F0;
     //outBufferPtr[n] = 0;
 
     //================ RIGHT CHANNEL ================
@@ -156,6 +148,7 @@ void processData()
 
     // Convert back to signed int  and set DAC output
     outBufferPtr[n+1] = (int16_t)(FLOAT_TO_INT16 * rightOut);
+    //outBufferPtr[n+1] = 0xAAAA;
     //outBufferPtr[n+1] = 0;
 
   }
@@ -171,7 +164,7 @@ void processData()
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-  uint16_t blinkTimer = 1; //1ms steps
+  uint16_t blinkTimer = 250; //1ms steps
   uint16_t blinkCount = 0;
   /* USER CODE END 1 */
 
@@ -193,7 +186,6 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  HAL_GPIO_WritePin(STAT_LED_INT_GPIO_Port, STAT_LED_INT_Pin, GPIO_PIN_SET);
   MX_DMA_Init();
   MX_I2C2_Init();
   MX_I2S2_Init();
@@ -201,7 +193,7 @@ int main(void)
   MX_USART1_UART_Init();
   MX_TIM14_Init();
   /* USER CODE BEGIN 2 */
-  codec_init(&hi2c2);
+  //codec_init(&hi2c2);
   //codec_init_teste(&hi2c2);
   HAL_TIM_Base_Start_IT(&htim14);
 
@@ -215,6 +207,7 @@ int main(void)
     if (flagDataReady)
     {
 		processData();
+		blinkTimer = 50;
     }
 
     if (GL_timer_1ms)
@@ -350,7 +343,7 @@ static void MX_I2C2_Init(void)
 
   /* USER CODE END I2C2_Init 1 */
   hi2c2.Instance = I2C2;
-  hi2c2.Init.ClockSpeed = 10000;
+  hi2c2.Init.ClockSpeed = 100000;
   hi2c2.Init.DutyCycle = I2C_DUTYCYCLE_2;
   hi2c2.Init.OwnAddress1 = 0;
   hi2c2.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;

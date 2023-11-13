@@ -34,34 +34,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := Firmware_TCC
+BUILD_ARTIFACT_NAME := Firmware_TCC_Master
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-Firmware_TCC.elf \
+Firmware_TCC_Master.elf \
 
 MAP_FILES += \
-Firmware_TCC.map \
+Firmware_TCC_Master.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-Firmware_TCC.list \
+Firmware_TCC_Master.list \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: Firmware_TCC.elf secondary-outputs
+main-build: Firmware_TCC_Master.elf secondary-outputs
 
 # Tool invocations
-Firmware_TCC.elf Firmware_TCC.map: $(OBJS) $(USER_OBJS) C:\Users\giova\Documents\Giovani\UCS\TCC\TCC1\Electronic_Project\Firmware_TCC\STM32F405RGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "Firmware_TCC.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\giova\Documents\Giovani\UCS\TCC\TCC1\Electronic_Project\Firmware_TCC\STM32F405RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Firmware_TCC.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Firmware_TCC_Master.elf Firmware_TCC_Master.map: $(OBJS) $(USER_OBJS) C:\Users\giova\Documents\Giovani\UCS\TCC\TCC1\Electronic_Project\Firmware_TCC_Master\STM32F405RGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "Firmware_TCC_Master.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\giova\Documents\Giovani\UCS\TCC\TCC1\Electronic_Project\Firmware_TCC_Master\STM32F405RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Firmware_TCC_Master.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -70,14 +70,14 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-Firmware_TCC.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "Firmware_TCC.list"
+Firmware_TCC_Master.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "Firmware_TCC_Master.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) Firmware_TCC.elf Firmware_TCC.list Firmware_TCC.map default.size.stdout
+	-$(RM) Firmware_TCC_Master.elf Firmware_TCC_Master.list Firmware_TCC_Master.map default.size.stdout
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
