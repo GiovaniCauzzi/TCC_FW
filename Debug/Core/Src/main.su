@@ -1,7 +1,6 @@
 ../Core/Src/main.c:79:6:HAL_I2SEx_TxRxHalfCpltCallback	16	static
 ../Core/Src/main.c:86:6:HAL_I2SEx_TxRxCpltCallback	16	static
-../Core/Src/main.c:98:6:generateSineWave	48	static
-../Core/Src/main.c:106:6:processData	16	static
+../Core/Src/main.c:106:6:processData	24	static
 ../Core/Src/main.c:164:5:main	16	static
 ../Core/Src/main.c:237:6:SystemClock_Config	88	static
 ../Core/Src/main.c:283:13:MX_ADC1_Init	24	static

@@ -90,7 +90,7 @@ void HAL_I2SEx_TxRxCpltCallback(I2S_HandleTypeDef *hi2s)
   flagDataReady = 1;
 }
 
-
+/*
 #define SAMPLE_RATE 48000  // Sample rate in Hz
 #define FREQUENCY 1440.0   // Frequency of the sine wave in Hz (A440)
 
@@ -101,24 +101,24 @@ void generateSineWave(float* buffer, int numSamples) {
         double amplitude = 0.5;  // Adjust the amplitude as needed (0.5 for a range of -0.5 to 0.5)
         buffer[i] = amplitude * sin(2 * M_PI * FREQUENCY * t);
     }
-}
+}*/
 
 void processData()
 {
-  static float leftIn, leftOut;
+  static float leftIn, leftOut, leftIn_late;
   static float rightIn, rightOut;
   static uint32_t time = 0;
-
-  if(time++ > 100000)
-  {
-	  time = 0;
-  }
 
   for (uint16_t n = 0 ; n < (dBUFFER_SIZE / 2 - 1) ; n += 2)
   {
 
     //================ LEFT CHANNEL ================
     // Get ADC input and convert it to float
+	 if(n > 0)
+	 {
+		 leftIn_late = INT16_TO_FLOAT * inBufferPtr[n-2];
+	 }
+
     leftIn = INT16_TO_FLOAT * inBufferPtr[n];
     if (leftIn > 1.0f)
     {
@@ -126,13 +126,14 @@ void processData()
     }
 
     // Compute new sample
-    leftOut = leftIn;
+    //leftOut = leftIn;
     //leftOut = 1000000000 * sin(2 * M_PI * FREQUENCY * time);
+    leftOut = leftIn + 0.8*leftIn_late;
+
 
     // Convert back to signed int  and set DAC output
     outBufferPtr[n] = (int16_t)(FLOAT_TO_INT16 * leftOut);
-    //outBufferPtr[n] = 0xF0F0;
-    //outBufferPtr[n] = 0;
+
 
     //================ RIGHT CHANNEL ================
     // Get ADC input and convert it to float
@@ -143,13 +144,12 @@ void processData()
     }
 
     // Compute new sample
-    rightOut = rightIn;
+    rightOut = rightIn/2;
     //rightOut = 1000000000 * sin(2 * M_PI * FREQUENCY * time);
 
     // Convert back to signed int  and set DAC output
     outBufferPtr[n+1] = (int16_t)(FLOAT_TO_INT16 * rightOut);
-    //outBufferPtr[n+1] = 0xAAAA;
-    //outBufferPtr[n+1] = 0;
+
 
   }
   flagDataReady = 0;
