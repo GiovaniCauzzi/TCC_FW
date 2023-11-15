@@ -79,14 +79,14 @@ static void MX_TIM14_Init(void);
 void HAL_I2SEx_TxRxHalfCpltCallback(I2S_HandleTypeDef *hi2s)
 {
   inBufferPtr = &adcData[0];
-  outBufferPtr = &dacData[0];
+  outBufferPtr = &dacData[dBUFFER_SIZE / 2];
   flagDataReady = 1;
 }
 
 void HAL_I2SEx_TxRxCpltCallback(I2S_HandleTypeDef *hi2s)
 {
   inBufferPtr = &adcData[dBUFFER_SIZE / 2];
-  outBufferPtr = &dacData[dBUFFER_SIZE / 2];
+  outBufferPtr = &dacData[0];
   flagDataReady = 1;
 }
 
@@ -120,15 +120,16 @@ void processData()
 	 }
 
     leftIn = INT16_TO_FLOAT * inBufferPtr[n];
-    if (leftIn > 1.0f)
+    /*if (leftIn > 1.0f)
     {
       leftIn -= 2.0f;
     }
-
+*/
     // Compute new sample
-    //leftOut = leftIn;
+    leftOut = leftIn;
+    //leftOut = 0.012*n;
     //leftOut = 1000000000 * sin(2 * M_PI * FREQUENCY * time);
-    leftOut = leftIn + 0.8*leftIn_late;
+    //leftOut = leftIn + 0.2*leftOut;
 
 
     // Convert back to signed int  and set DAC output
@@ -138,10 +139,10 @@ void processData()
     //================ RIGHT CHANNEL ================
     // Get ADC input and convert it to float
     rightIn = INT16_TO_FLOAT * inBufferPtr[n+1];
-    if (rightIn > 1.0f)
+    /*if (rightIn > 1.0f)
     {
       rightIn -= 2.0f;
-    }
+    }*/
 
     // Compute new sample
     rightOut = rightIn/2;
